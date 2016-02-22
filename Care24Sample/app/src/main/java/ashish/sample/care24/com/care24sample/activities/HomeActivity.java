@@ -81,16 +81,9 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
     @Override
     public void onRequestCompleted(String requestTag, String response) {
         if (requestTag.equals(feedsUrl)) {
-            hideLoadingLayout();
-            hideErrorLayout();
-
             FeedObject mData = new Gson().fromJson(response, FeedObject.class);
-            setAdapterData(mData);
+            new FeedDbAsynctask().execute(mData);
         }
-    }
-
-    private void setAdapterData(FeedObject mData) {
-        new FeedDbAsynctask().execute(mData);
     }
 
     class FeedDbAsynctask extends AsyncTask<FeedObject, Integer, List<FeedObject.FeedSingleObject>> {
@@ -116,6 +109,9 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
         @Override
         protected void onPostExecute(List<FeedObject.FeedSingleObject> mData) {
             super.onPostExecute(mData);
+            hideLoadingLayout();
+            hideErrorLayout();
+
             adapter = new HomeActivityListAdapter(HomeActivity.this, mData);
             recyclerView.setAdapter(adapter);
         }
