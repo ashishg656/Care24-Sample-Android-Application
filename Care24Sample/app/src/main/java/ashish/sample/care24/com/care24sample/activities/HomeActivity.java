@@ -93,6 +93,9 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
             case R.id.connection_error_layout:
                 loadData();
                 break;
+            case android.R.id.home:
+                super.onBackPressed();
+                break;
         }
     }
 }
