@@ -10,9 +10,12 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
+import java.util.List;
+
 import ashish.sample.care24.com.care24sample.R;
 import ashish.sample.care24.com.care24sample.adapters.HomeActivityListAdapter;
 import ashish.sample.care24.com.care24sample.application.ZApplication;
+import ashish.sample.care24.com.care24sample.database.FeedDbHelper;
 import ashish.sample.care24.com.care24sample.extras.Urls;
 import ashish.sample.care24.com.care24sample.objects.FeedObject;
 import ashish.sample.care24.com.care24sample.serverApi.AppRequestListener;
@@ -27,11 +30,14 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
     LinearLayoutManager layoutManager;
     HomeActivityListAdapter adapter;
     Toolbar toolbar;
+    FeedDbHelper dbHelper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity_layout);
+
+        dbHelper = new FeedDbHelper(this);
 
         setProgressLayoutVariablesAndErrorVariables();
 
@@ -83,7 +89,21 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
     }
 
     private void setAdapterData(FeedObject mData) {
-        adapter = new HomeActivityListAdapter(this, mData.getData());
+        dbHelper.addDataToDatabase(mData);
+
+        fetchDataFromDatabase();
+    }
+
+    private void fetchDataFromDatabase() {
+        List<FeedObject.FeedSingleObject> mData = dbHelper.getAllFeedData();
+
+        for (int i = 0; i < mData.size(); i++) {
+            if (mData.get(i).getTitle() == null) {
+                mData.remove(i);
+            }
+        }
+
+        adapter = new HomeActivityListAdapter(this, mData);
         recyclerView.setAdapter(adapter);
     }
 
