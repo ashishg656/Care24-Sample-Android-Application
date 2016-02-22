@@ -49,11 +49,11 @@ public class FeedDbHelper extends SQLiteOpenHelper {
             values.put(DBWrapper.FeedEntry.COLUMN_NAME_TITLE, obj.getTitle());
             values.put(DBWrapper.FeedEntry.COLUMN_NAME_URI, obj.getUri());
 
-            Cursor cursor = db.query(DBWrapper.FeedEntry.TABLE_NAME, projection, DBWrapper.FeedEntry.COLUMN_NAME_ENTRY_ID + "=?", new String[]{obj.getId()}, null, null, null);
+            Cursor cursor = db.query(DBWrapper.FeedEntry.TABLE_NAME, projection, DBWrapper.FeedEntry.COLUMN_NAME_ENTRY_ID + "=" + obj.getId(), null, null, null, null);
 
-            if (cursor != null) {
+            if (cursor != null && cursor.getCount() == 1) {
                 cursor.moveToFirst();
-                db.update(DBWrapper.FeedEntry.TABLE_NAME, values, DBWrapper.FeedEntry.COLUMN_NAME_ENTRY_ID + "=?", new String[]{obj.getId()});
+                db.update(DBWrapper.FeedEntry.TABLE_NAME, values, DBWrapper.FeedEntry.COLUMN_NAME_ENTRY_ID + "=" + obj.getId(), null);
             } else {
                 db.insert(DBWrapper.FeedEntry.TABLE_NAME, null, values);
             }

@@ -1,5 +1,6 @@
 package ashish.sample.care24.com.care24sample.activities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -89,22 +90,35 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
     }
 
     private void setAdapterData(FeedObject mData) {
-        dbHelper.addDataToDatabase(mData);
-
-        fetchDataFromDatabase();
+        new FeedDbAsynctask().execute(mData);
     }
 
-    private void fetchDataFromDatabase() {
-        List<FeedObject.FeedSingleObject> mData = dbHelper.getAllFeedData();
+    class FeedDbAsynctask extends AsyncTask<FeedObject, Integer, List<FeedObject.FeedSingleObject>> {
 
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).getTitle() == null) {
-                mData.remove(i);
+        @Override
+        protected List<FeedObject.FeedSingleObject> doInBackground(FeedObject... params) {
+//            save data in database
+            dbHelper.addDataToDatabase(params[0]);
+
+//            retreive data from database
+            List<FeedObject.FeedSingleObject> mData = dbHelper.getAllFeedData();
+
+//            remove items with title as null
+            for (int i = 0; i < mData.size(); i++) {
+                if (mData.get(i).getTitle() == null) {
+                    mData.remove(i);
+                }
             }
+
+            return mData;
         }
 
-        adapter = new HomeActivityListAdapter(this, mData);
-        recyclerView.setAdapter(adapter);
+        @Override
+        protected void onPostExecute(List<FeedObject.FeedSingleObject> mData) {
+            super.onPostExecute(mData);
+            adapter = new HomeActivityListAdapter(HomeActivity.this, mData);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
