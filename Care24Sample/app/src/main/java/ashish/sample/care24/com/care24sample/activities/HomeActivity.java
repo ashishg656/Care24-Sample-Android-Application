@@ -64,6 +64,7 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
 
     @Override
     public void onRequestStarted(String requestTag) {
+        updateProgressText("Fetching data form server");
         if (requestTag.equals(feedsUrl)) {
             hideErrorLayout();
             showLoadingLayout();
@@ -87,6 +88,12 @@ public class HomeActivity extends BaseActivity implements Urls, AppRequestListen
     }
 
     class FeedDbAsynctask extends AsyncTask<FeedObject, Integer, List<FeedObject.FeedSingleObject>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            updateProgressText("Fetched data from server successfully\nSaving records in database");
+        }
 
         @Override
         protected List<FeedObject.FeedSingleObject> doInBackground(FeedObject... params) {

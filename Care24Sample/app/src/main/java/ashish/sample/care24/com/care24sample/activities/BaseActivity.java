@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import ashish.sample.care24.com.care24sample.R;
 
@@ -49,4 +50,8 @@ public class BaseActivity extends AppCompatActivity {
         connectionErrorLayout.setVisibility(View.GONE);
     }
 
+    void updateProgressText(String text) {
+        TextView textView = (TextView) findViewById(R.id.progresstext);
+        textView.setText(text);
+    }
 }
